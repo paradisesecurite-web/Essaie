@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700;900&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="jours.css">
 </head>
 <body class="locked">
 <canvas id="embers" aria-hidden="true"></canvas>
@@ -99,6 +100,14 @@
       <span><b>Serveur</b> RP-PvP</span>
       <span><b>Guilde</b> sérieuse. Nous, moins.</span>
     </div>
+  </section>
+
+  <section id="portes">
+    <div class="sec-head reveal"><span class="sec-num">✦</span><h2>Le Calendrier des Ombres</h2><p>Une porte s'ouvre chaque matin à 10 h, jusqu'au grand soir.</p></div>
+    <div class="doors reveal" id="doors"></div>
+    <p class="next-door" id="nextDoor"></p>
+    <div class="map-home reveal" id="mapHome"></div>
+    <p class="hint">Chaque porte franchie te donne un fragment de la carte. Les cinq mènent au QG.</p>
   </section>
 
   <section id="fable">
@@ -212,6 +221,7 @@
 
 <nav id="bnav" aria-label="Navigation">
   <a href="#top" data-s="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12M6 22h12M7 2c0 5 10 6 10 10S7 17 7 22M17 2c0 5-10 6-10 10s10 5 10 10"/></svg>Décompte</a>
+  <a href="#portes" data-s="portes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 21V9a7 7 0 0 1 14 0v12M3 21h18M15 14h.01"/></svg>Portes</a>
   <a href="#fable" data-s="fable"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h11a3 3 0 0 1 0 6H8M5 4a2 2 0 0 0 0 4h3v10a2 2 0 0 0 2 2h9a2 2 0 0 0 0-4h-9"/></svg>Fable</a>
   <a href="#duel" data-s="duel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l9-9M13 11l6-7 1 1-7 6M6 15l3 3M3 21l2-2M20 20l-9-9M11 11L5 4 4 5l7 6M18 15l-3 3M21 21l-2-2"/></svg>Duel</a>
   <a href="#pacte" data-s="pacte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z M14 3v6h6 M8 17c2-3 3 1 5-2s2 1 3 0"/></svg>Pacte</a>
@@ -231,6 +241,7 @@
 
 <div id="vanishFx"><span>Disparition !</span></div>
 
+<script src="calendrier.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@ const PARAMS = new URLSearchParams(location.search);
 /* ?reset : efface tout ce que ce téléphone a mémorisé (Fable, pacte, secrets, record) */
 const WAS_RESET = PARAMS.has('reset');
 if (WAS_RESET) {
-  ['gs_fable', 'gs_pact', 'gs_secrets', 'gs_best'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  try { Object.keys(localStorage).filter(k => k.startsWith('gs_') && k !== 'gs_mute').forEach(k => localStorage.removeItem(k)); } catch (e) {}
   try { history.replaceState(null, '', location.pathname); } catch (e) {}
 }
 
@@ -555,7 +555,7 @@ $$('.reveal').forEach(el => io.observe(el));
 const navIo = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) $$('#bnav a').forEach(a => a.classList.toggle('on', a.dataset.s === e.target.id));
 }), { rootMargin: '-45% 0px -50% 0px' });
-['top', 'fable', 'duel', 'pacte'].forEach(id => navIo.observe(document.getElementById(id)));
+['top', 'portes', 'fable', 'duel', 'pacte'].forEach(id => navIo.observe(document.getElementById(id)));
 $$('#bnav a').forEach(a => a.addEventListener('click', () => Sound.click()));
 
 /* =========================================================
@@ -1233,5 +1233,28 @@ const Pact = (() => {
 $('#enterBtn').addEventListener('click', () => setTimeout(() => { Duel.size(); Pact.size(); }, 300));
 
 /* Accès direct pour tests : ?entrer */
-if (WAS_RESET) setTimeout(() => toast('Tout est remis à zéro : Fable, pacte, secrets et record.', 3500), 600);
+if (WAS_RESET) setTimeout(() => toast('Tout est remis à zéro : Fable, pacte, secrets, portes et records.', 3500), 600);
 if (PARAMS.has('entrer')) { introOpened = true; $('#enterBtn').click(); }
+
+/* =========================================================
+   CALENDRIER DES OMBRES (page principale)
+   ========================================================= */
+(() => {
+  const AP = PARAMS.has('apercu');
+  const left = ms => { const t = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(t / 86400), hh = Math.floor(t / 3600) % 24, m = Math.floor(t / 60) % 60, x = t % 60; return (d ? d + ' j ' : '') + String(hh).padStart(2, '0') + ' h ' + String(m).padStart(2, '0') + ' min ' + String(x).padStart(2, '0') + ' s'; };
+  function render() {
+    const done = new Set(store.get('gs_frags', []));
+    $('#doors').innerHTML = DOORS.map(d => {
+      const open = AP || Date.now() >= d.at;
+      return `<a class="door ${open ? 'open' : ''} ${done.has(d.n) ? 'done' : ''}" href="${d.url}${AP ? '?apercu' : ''}" aria-label="Porte ${ROMAN5[d.n - 1]} : ${d.title}${open ? '' : ' (scellée)'}"><span class="lk">${open ? '🔓' : '🔒'}</span><span class="n">${ROMAN5[d.n - 1]}</span><span class="d">${d.day.split(' ').slice(1).join(' ')}</span></a>`;
+    }).join('');
+    const next = DOORS.find(d => Date.now() < d.at);
+    const cur = [...DOORS].reverse().find(d => Date.now() >= d.at);
+    $('#nextDoor').innerHTML = (cur ? `Porte ouverte : <b>${cur.title}</b>${done.has(cur.n) ? ' ✔' : ' — elle t\'attend !'}<br>` : '') +
+      (next ? `Prochaine : <b>${next.title}</b>, dans <span id="ndLeft">${left(next.at - Date.now())}</span>` : 'Toutes les portes sont ouvertes. Rendez-vous au QG.');
+    $('#mapHome').innerHTML = mapSVG([...done]);
+  }
+  render();
+  setInterval(() => { const next = DOORS.find(d => Date.now() < d.at); if (!next) return; const el = $('#ndLeft'); if (el) el.textContent = left(next.at - Date.now()); if (next.at - Date.now() < 1000) setTimeout(render, 1200); }, 1000);
+  addEventListener('pageshow', render);
+})();
