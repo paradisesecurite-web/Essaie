@@ -2,7 +2,7 @@
 DAYS = [
  (1, 'La Nuit des Morts', '31 octobre', 'Halloween. Les morts se lèvent, et l’un d’eux a des comptes à régler.'),
  (2, 'Le Procès des Écouteurs', '1er novembre', 'Une vieille affaire refait surface. La Cour des Ombres est en session.'),
- (3, 'Le 10 000 des Ombres', '2 novembre', 'Six dés, une taverne, et Stanley qui chauffe dans son coin.'),
+ (3, 'Le 10 000 des Ombres', '2 novembre', 'Cinq dés, une taverne, et Stanley qui chauffe dans son coin.'),
  (4, 'La Rançon de Carlotta', '3 novembre', 'Quatre nuits au QG. Une impératrice n’est pas d’accord.'),
  (5, 'La Veillée d’Armes', '4 novembre', 'La dernière nuit avant le monde nouveau.'),
 ]
