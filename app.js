@@ -14,6 +14,12 @@ const TARGET = Date.UTC(2026, 10, 4, 23, 0, 0); // 5 nov. 2026 00:00 heure de Pa
 const IS_TOUCH = matchMedia('(pointer: coarse)').matches;
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PARAMS = new URLSearchParams(location.search);
+/* ?reset : efface tout ce que ce téléphone a mémorisé (Fable, pacte, secrets, record) */
+const WAS_RESET = PARAMS.has('reset');
+if (WAS_RESET) {
+  ['gs_fable', 'gs_pact', 'gs_secrets', 'gs_best'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+}
 
 /* ---------------- Sceau de cire (SVG + canvas) ---------------- */
 function wobblyCircle(cx, cy, r) {
@@ -1160,10 +1166,19 @@ const Pact = (() => {
     if (pts < 12) { Sound.deny(); toast('Signe un peu plus franchement, voleur. Yohann, lui, n\'a pas hésité.'); return; }
     seal(true);
   });
+  function unseal() {
+    sealed = false; strokes = []; wrapEl.classList.remove('inked'); redraw();
+    $('#pact').classList.remove('sealed');
+    $('#pactActions').classList.remove('hidden'); $('#pactDone').classList.add('hidden'); $('#pactRedoRow').classList.add('hidden');
+    $('#pSigned').textContent = 'EN ATTENTE DE TA SIGNATURE'; $('#pSigned').style.color = '#8e1b17';
+    try { localStorage.removeItem('gs_pact'); } catch (e) {}
+    Sound.whoosh(); toast('Le pacte est vierge. Signe à nouveau, voleur.');
+  }
+  $('#pactRedo').addEventListener('click', () => { Sound.click(); unseal(); });
   function seal(anim) {
     sealed = true;
     $('#pact').classList.add('sealed');
-    $('#pactActions').classList.add('hidden'); $('#pactDone').classList.remove('hidden');
+    $('#pactActions').classList.add('hidden'); $('#pactDone').classList.remove('hidden'); $('#pactRedoRow').classList.remove('hidden');
     if (canShareFiles()) $('#pactShare').classList.remove('hidden');
     $('#pSigned').textContent = '✔ SIGNÉ ET SCELLÉ'; $('#pSigned').style.color = '#2a6a2a';
     if (anim) {
@@ -1218,4 +1233,5 @@ const Pact = (() => {
 $('#enterBtn').addEventListener('click', () => setTimeout(() => { Duel.size(); Pact.size(); }, 300));
 
 /* Accès direct pour tests : ?entrer */
+if (WAS_RESET) setTimeout(() => toast('Tout est remis à zéro : Fable, pacte, secrets et record.', 3500), 600);
 if (PARAMS.has('entrer')) { introOpened = true; $('#enterBtn').click(); }
