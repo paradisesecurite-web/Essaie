@@ -79,18 +79,18 @@
     let W = 0, H = 0, st = null, run = false, last = 0, freed = store.get('gs_j1_freed', false);
     function size() { const d = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect(); if (!r.width) return; W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); draw(); }
     const pinsFor = l => Math.min(6, 3 + Math.floor((l - 1) / 2));
-    function target() { st.tA = Math.random() * Math.PI * 2; st.tW = Math.max(.32, .9 - st.lvl * .06); }
-    function reset() { st = { lvl: 1, pins: pinsFor(1), set: 0, ang: 0, dir: 1, speed: 2.1, picks: 3, opened: 0, fx: [], flash: 0, shake: 0, over: false, open: 0 }; target(); }
+    function target() { st.tA = Math.random() * Math.PI * 2; st.tW = Math.max(.45, 1.05 - st.lvl * .05); }
+    function reset() { st = { lvl: 1, pins: pinsFor(1), set: 0, ang: 0, dir: 1, speed: 1.75, picks: 3, opened: 0, fx: [], flash: 0, shake: 0, over: false, open: 0 }; target(); }
     const angDist = (a, b) => { let d = Math.abs(a - b) % (Math.PI * 2); return d > Math.PI ? Math.PI * 2 - d : d; };
     function fx(t, col) { st.fx.push({ t, col, life: 0 }); }
     function tap() {
       if (!run || st.over || st.open > 0) return;
-      if (angDist(st.ang, st.tA) <= st.tW / 2 + .06) {
+      if (angDist(st.ang, st.tA) <= st.tW / 2 + .12) {
         st.set++; st.flash = 1; Sound.tone(1900, .05, { type: 'square', g: .06 }); Sound.tone(950, .12, { type: 'triangle', g: .1, t: .03 });
         if (st.set >= st.pins) {
           st.opened++; st.open = 1.1; Sound.chime(); fx('Serrure ouverte !', '#f3d27a');
           if (st.opened >= 3 && !freed) { freed = true; store.set('gs_j1_freed', true); setTimeout(epilogue, 900); }
-        } else { target(); st.dir *= -1; st.speed += .12; }
+        } else { target(); st.dir *= -1; st.speed += .08; }
       } else {
         st.picks--; st.shake = 9; Sound.crack(); fx('Crochet brisé !', '#ff7a6a');
         if (navigator.vibrate) try { navigator.vibrate(50); } catch (e) {}
@@ -98,7 +98,7 @@
       }
       hud();
     }
-    function nextLock() { st.lvl++; st.pins = pinsFor(st.lvl); st.set = 0; st.speed = 2.1 + st.lvl * .38; target(); }
+    function nextLock() { st.lvl++; st.pins = pinsFor(st.lvl); st.set = 0; st.speed = 1.75 + st.lvl * .25; if (st.picks < 3) { st.picks++; fx('+1 crochet', '#bfe3ff'); } hud(); target(); }
     function hud() { $('#lkNow').textContent = st.opened; $('#lkPicks').textContent = st.picks; }
     function update(dt) {
       st.ang = (st.ang + st.dir * st.speed * dt + Math.PI * 2) % (Math.PI * 2);
