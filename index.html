@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Pacte des Ombres</title>
+<meta name="description" content="Get Sauced convoque Get Socrated. Ouverture du monde : jeudi 5 novembre 2026, minuit.">
+<meta name="theme-color" content="#120a06">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aurélien, un parchemin scellé t'attend…">
+<meta property="og:description" content="Get Sauced convoque Get Socrated. Ouverture du monde : 5 novembre 2026, minuit. Brise le sceau.">
+<meta property="og:image" content="https://paradisesecurite-web.github.io/Essaie/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://paradisesecurite-web.github.io/Essaie/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23a51d17'/%3E%3Cpath d='M32 8l4 30-4 4-4-4z M22 38h20v4H22z M30 42h4v10h-4z' fill='%23f3d27a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700;900&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="locked">
+<canvas id="embers" aria-hidden="true"></canvas>
+
+<button id="muteBtn" aria-label="Couper le son"></button>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ INTRO : le parchemin scellé ============ -->
+<div id="intro">
+  <div class="tavern-glow"></div>
+  <p class="intro-kicker">Un messager encapuchonné a laissé ceci sur ta table, puis il a disparu…</p>
+  <div class="scroll" id="scroll">
+    <div class="roller"></div>
+    <div class="sheet" id="sheet">
+      <div class="parch" id="sheetInner">
+        <p class="sm">Par ordre de la Confrérie des Ombres</p>
+        <h1 class="convo-title">Convocation</h1>
+        <p class="to">À l'attention d'<b>Aurélien</b>, dit <b>Get Socrated</b></p>
+        <div class="rule"></div>
+        <div class="typed-wrap"><div class="ghost" id="introGhost"></div><div class="typed" id="introText"></div></div>
+        <p class="from">— Yohann, dit <b>Get Sauced</b></p>
+        <button class="btn gold" id="enterBtn">Entrer dans l'ombre</button>
+      </div>
+    </div>
+    <div class="roller"></div>
+    <div class="ribbon"></div>
+    <button class="seal-btn" id="sealBtn" aria-label="Briser le sceau de cire">
+      <div class="half l" id="sealL"></div>
+      <div class="half r" id="sealR"></div>
+      <svg class="crack" viewBox="0 0 200 200" aria-hidden="true"><polyline points="104,8 92,60 110,104 88,148 104,192" fill="none" stroke="#ffd9a0" stroke-width="3.5" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px #ffb060)"/></svg>
+    </button>
+  </div>
+  <p class="intro-hint" id="introHint">Touche le sceau pour le briser</p>
+</div>
+
+<!-- ============ APP ============ -->
+<main id="app" aria-hidden="true">
+
+  <section id="top" class="hero">
+    <button id="sigil" class="sigil" aria-label="Sceau de la Confrérie">
+      <svg class="prog" viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="50"/></svg>
+      <span id="sigilSeal"></span>
+    </button>
+    <p class="kicker">La Confrérie des Ombres présente</p>
+    <h1 class="duo"><span class="who" id="eggSauce">Get Sauced</span><span class="amp">&amp;</span><span class="who" id="eggSocrate">Get Socrated</span></h1>
+    <p class="tag">Deux voleurs. Un serveur RP-PvP. Zéro pitié.</p>
+
+    <div class="cd-wrap" id="cdWrap">
+      <p class="cd-label" id="cdLabel">Le monde renaît dans</p>
+      <div class="cd" id="cd">
+        <div class="cd-box"><span class="cd-num" id="cdD">--</span><span class="cd-unit">Jours</span></div>
+        <div class="cd-box"><span class="cd-num" id="cdH">--</span><span class="cd-unit">Heures</span></div>
+        <div class="cd-box"><span class="cd-num" id="cdM">--</span><span class="cd-unit">Minutes</span></div>
+        <div class="cd-box"><span class="cd-num" id="cdS">--</span><span class="cd-unit">Secondes</span></div>
+      </div>
+      <p class="cd-date"><b>Jeudi 5 novembre 2026 · 00:00</b><br>heure de Paris · World of Warcraft: Forever</p>
+    </div>
+
+    <div class="dossier reveal">
+      <div class="card">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3c-7 0-11 7-11 14 0 4 1 7 3 9l-5 11h26l-5-11c2-2 3-5 3-9 0-7-4-14-11-14z" fill="#0b0604" stroke="#d4a64a" stroke-width="1"/><ellipse cx="17" cy="19" rx="1.6" ry="1" fill="#f3d27a"/><ellipse cx="23" cy="19" rx="1.6" ry="1" fill="#f3d27a"/></svg>
+        <p class="role">Le complice</p>
+        <h4>Yohann</h4>
+        <p class="alias">« Get Sauced »</p>
+        <ul><li>Voleur</li><li>Race : <b id="yRace">elfe de la nuit… ou mort-vivant ?</b></li><li>Arme : la sauce</li></ul>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3c-7 0-11 7-11 14 0 4 1 7 3 9l-5 11h26l-5-11c2-2 3-5 3-9 0-7-4-14-11-14z" fill="#0b0604" stroke="#d4a64a" stroke-width="1"/><ellipse cx="17" cy="19" rx="1.6" ry="1" fill="#9fd0ff"/><ellipse cx="23" cy="19" rx="1.6" ry="1" fill="#9fd0ff"/></svg>
+        <p class="role">Le cerveau</p>
+        <h4>Aurélien</h4>
+        <p class="alias">« <span id="aName">Get Socrated</span> »</p>
+        <ul><li>Voleur</li><li>Race : <b id="aRace">à forger dans la Fable</b></li><li>Faction : <b id="aFaction">c'est toi qui choisis</b></li></ul>
+      </div>
+    </div>
+    <div class="intel reveal">
+      <span><b>QG</b> le bureau</span>
+      <span><b>Opération</b> 4 jours</span>
+      <span><b>Serveur</b> RP-PvP</span>
+      <span><b>Guilde</b> sérieuse. Nous, moins.</span>
+    </div>
+  </section>
+
+  <section id="fable">
+    <div class="sec-head reveal"><span class="sec-num">I</span><h2>La Fable des Deux Ombres</h2><p>Une aventure en six chapitres. Tes choix décident de tout.</p></div>
+    <div class="parch fable-card reveal" id="fableCard">
+      <div class="fable-body" id="fableBody">
+        <div class="fable-intro" id="fableIntro">
+          <p>La veille de l'ouverture du monde, deux voleurs préparent un dernier coup. Tu choisiras ton nom, ta race… et le camp de notre duo, pour toujours.</p>
+          <button class="btn ink" id="fableStart">Ouvrir la Fable</button>
+        </div>
+        <div id="fableMain" class="hidden">
+          <div class="fable-top"><span id="chNum">Chapitre I</span><div class="dots" id="dots"></div></div>
+          <h3 id="chTitle"></h3>
+          <div id="fableText" class="fable-text"></div>
+          <p class="skip-hint" id="skipHint">Touche le texte pour accélérer</p>
+          <div id="fableChoices" class="choices"></div>
+        </div>
+      </div>
+    </div>
+    <div class="poster-zone hidden" id="posterZone">
+      <img id="posterImg" alt="Ton avis de recherche">
+      <div class="btn-row">
+        <button class="btn gold hidden" id="posterShare">Envoyer à Yohann</button>
+        <button class="btn dark" id="posterDl">Télécharger l'image</button>
+      </div>
+      <p class="note">Envoie-la à Get Sauced sur WhatsApp. Il saura quoi en faire.</p>
+      <div class="btn-row" style="margin-top:14px"><button class="btn dark small" id="fableReplay">Rejouer la Fable</button></div>
+    </div>
+  </section>
+
+  <section id="duel">
+    <div class="sec-head reveal"><span class="sec-num">II</span><h2>Duel dans les Ombres</h2><p>Entraîne-toi avant le grand soir. Les ennemis ne t'attendront pas.</p></div>
+    <div class="arena reveal" id="arena">
+      <div class="hud top">
+        <div class="row"><span id="eName">—</span><span id="eHpTxt"></span></div>
+        <div class="bar hp-e"><i id="eHp"></i></div>
+      </div>
+      <canvas id="duelCv"></canvas>
+      <div class="hud bot">
+        <div class="split">
+          <div><div class="row"><span>Vie</span><span id="pHpTxt">100</span></div><div class="bar hp-p"><i id="pHp"></i></div></div>
+          <div><div class="row"><span>Énergie</span><span id="pEnTxt">100</span></div><div class="bar en"><i id="pEn"></i></div></div>
+        </div>
+        <div class="cps" id="cps"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="duel-ov" id="duelOv">
+        <h3>Duel dans les Ombres</h3>
+        <p><b>Attaque pernicieuse</b> : gagne des points de combo. <b>Éviscération</b> : dépense-les en gros dégâts. Quand l'anneau rouge se referme sur l'ennemi, <b>Esquive</b>. S'il devient doré : <b>riposte</b>&nbsp;!</p>
+        <button class="btn gold" id="duelStart">Dégainer</button>
+      </div>
+    </div>
+    <div class="skills">
+      <button class="skill" id="skSS"><span class="ic">🗡️</span><span class="nm">Attaque pernicieuse</span><span class="cost">40 énergie · +1 ◆</span></button>
+      <button class="skill ev" id="skEV"><span class="ic">🩸</span><span class="nm">Éviscération</span><span class="cost">35 énergie · ◆ → dégâts</span></button>
+      <button class="skill do" id="skDO"><span class="ic">💨</span><span class="nm">Esquive</span><span class="cost">gratuit · timing !</span><span class="cdv" id="doCd"></span></button>
+    </div>
+    <div class="scores"><div>Score<b id="scNow">0</b></div><div>Niveau<b id="scLvl">1</b></div><div>Record<b id="scBest">0</b></div></div>
+    <p class="duel-tips reveal"><b>ASTUCE DE VOLEUR</b> — un coup critique sur l'Attaque pernicieuse donne 2 points de combo. Une Éviscération à 5 points, c'est la signature de la maison.</p>
+  </section>
+
+  <section id="pacte">
+    <div class="sec-head reveal"><span class="sec-num">III</span><h2>Le Pacte des Ombres</h2><p>Yohann a déjà signé. À toi.</p></div>
+    <div class="parch pact reveal" id="pact">
+      <h3>Le Pacte des Ombres</h3>
+      <p class="pre">Entre les soussignés, <b>Yohann</b>, dit « Get Sauced », voleur de son état, et <b>Aurélien</b>, dit « <span class="pName">Get Socrated</span> », voleur de son état également, il est convenu ce qui suit, sous le regard des ombres et d'une chope de bière&nbsp;:</p>
+      <ol>
+        <li>Le duo entre dans le monde ensemble, le 5 novembre 2026 à minuit. Ou n'y entre pas.</li>
+        <li>Aucun voleur n'abandonne l'autre. En PvP, on disparaît ensemble ; en donjon, on meurt ensemble.</li>
+        <li>Le butin se partage à parts égales. Les objets légendaires se jouent aux dés, et le perdant ne boude pas plus de dix minutes.</li>
+        <li>Celui qui attire tout le donjon sur le groupe paie la prochaine tournée.</li>
+        <li>Pendant quatre jours, le bureau devient notre QG. Les réunions sont reportées pour cause de raid.</li>
+        <li>La guilde est sérieuse. Nous le serons aussi. La plupart du temps.</li>
+        <li>Ce pacte vaut du niveau 1 au niveau 60, et bien au-delà.</li>
+      </ol>
+      <p class="done" id="pactDate"></p>
+      <div class="sigs">
+        <div class="sig">
+          <div class="sig-y" id="sigY">Get Sauced</div>
+          <div class="sig-line"></div>
+          <p>Yohann, dit Get Sauced<br><small>✔ SIGNÉ</small></p>
+        </div>
+        <div class="sig">
+          <div class="pad-wrap" id="padWrap"><canvas id="pad"></canvas><span class="pad-ph">Signe ici, au doigt</span></div>
+          <div class="sig-line"></div>
+          <p>Aurélien, dit <span class="pName">Get Socrated</span><br><small id="pSigned" style="color:#8e1b17">EN ATTENTE DE TA SIGNATURE</small></p>
+        </div>
+      </div>
+      <div class="pact-seal" id="pactSeal"></div>
+      <div class="btn-row" id="pactActions">
+        <button class="btn dark small" id="padClear">Effacer</button>
+        <button class="btn ink" id="padSeal">Sceller le pacte</button>
+      </div>
+      <div class="btn-row hidden" id="pactDone">
+        <button class="btn gold hidden" id="pactShare">Envoyer à Yohann</button>
+        <button class="btn ink" id="pactDl">Télécharger le pacte</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="secrets reveal">
+      <h4>Secrets du parchemin</h4>
+      <div class="gems" id="gems"></div>
+      <p id="secretsTxt">Ce parchemin cache 9 secrets. Touche une gemme pour un indice.</p>
+    </div>
+    <p class="credit">Forgé par Yohann pour Aurélien,<br>avec amour et fourberie.</p>
+    <p class="legal">Création de fan, 100 % originale. Non affiliée à Blizzard Entertainment.</p>
+  </footer>
+</main>
+
+<nav id="bnav" aria-label="Navigation">
+  <a href="#top" data-s="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12M6 22h12M7 2c0 5 10 6 10 10S7 17 7 22M17 2c0 5-10 6-10 10s10 5 10 10"/></svg>Décompte</a>
+  <a href="#fable" data-s="fable"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h11a3 3 0 0 1 0 6H8M5 4a2 2 0 0 0 0 4h3v10a2 2 0 0 0 2 2h9a2 2 0 0 0 0-4h-9"/></svg>Fable</a>
+  <a href="#duel" data-s="duel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l9-9M13 11l6-7 1 1-7 6M6 15l3 3M3 21l2-2M20 20l-9-9M11 11L5 4 4 5l7 6M18 15l-3 3M21 21l-2-2"/></svg>Duel</a>
+  <a href="#pacte" data-s="pacte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z M14 3v6h6 M8 17c2-3 3 1 5-2s2 1 3 0"/></svg>Pacte</a>
+</nav>
+
+<div id="modal" role="dialog" aria-modal="true"><div class="modal-card parch" id="modalCard"><button class="x" id="modalX" aria-label="Fermer">×</button><div id="modalBody"></div></div></div>
+
+<div id="celebrate" aria-live="polite">
+  <canvas id="fwCv"></canvas>
+  <div class="cel-inner">
+    <p class="k" id="celK">Jeudi 5 novembre 2026 · minuit</p>
+    <h2>Le monde est ouvert&nbsp;!</h2>
+    <p>Get Sauced &amp; <span class="pName">Get Socrated</span>, la légende commence maintenant. Lancez le jeu, sortez les dagues, prévenez le bureau.</p>
+    <button class="btn gold" id="celClose">Entrer dans la légende</button>
+  </div>
+</div>
+
+<div id="vanishFx"><span>Disparition !</span></div>
+
+<script src="app.js"></script>
+</body>
+</html>
