@@ -9,7 +9,7 @@
       <div id="storyRoot"></div><div id="replayRow" class="btn-row hidden" style="margin-top:14px"><button class="btn dark small" id="replayBtn">Revivre la Fable</button></div></section>
     <section id="diceSec" class="hidden"><div class="sec-head"><span class="sec-num">II</span><h2>Le 10 000 des Ombres</h2><p>Toi contre Françoise et Jean-François. Stanley arbitre.</p></div>
       <div class="panel dice-board" id="board"></div>
-      <p class="hint"><b>RÈGLES</b> — 5 dés · 1 = 100 · 5 = 50 · brelan = 100 × la valeur (trois 1 = 1 000) · suite 1-2-3-4-5 ou 2-3-4-5-6 = 1 500. Il faut <b>500 points en un tour pour ouvrir</b> son score. Touche les dés qui rapportent pour les garder, puis relance le reste ou mets à l'abri. Un lancer sans rien = tour perdu.</p>
+      <p class="hint"><b>RÈGLES</b> — 5 dés · 1 = 100 · 5 = 50 · brelan = 100 × la valeur (trois 1 = 1 000) · suite 1-2-3-4-5 ou 2-3-4-5-6 = 1 500 · <b>main pleine</b> (les 5 dés marquent) = on rejoue les 5 d'office. Il faut <b>500 points en un tour pour ouvrir</b> son score. Touche les dés qui rapportent pour les garder, puis relance le reste ou mets à l'abri. Un lancer sans rien = tour perdu.</p>
       <div class="parch epilogue hidden" id="epi"></div>
     </section>
     ${doorFooter(3)}`;
@@ -26,6 +26,7 @@
     },
     {
       title: 'Le Défi',
+      onShow: () => { if (!$('#storyRoot .rivals')) $('#storyRoot .fable-text').insertAdjacentHTML('afterend', `<div class="rivals rivals-parch" style="margin-top:16px"><img src="parents.jpg?v=2" alt="Françoise et Jean-François" width="120" height="120"><p><b>Françoise & Jean-François</b><br>Maîtres du 10 000</p></div>`); },
       text: s => ({
         calin: 'Tu ouvres grand les bras. Stanley passe en position maximale. C\'est sa façon de dire « moi aussi ».',
         confid: 'Tu lui racontes tout : les clients, les objectifs, les ventes dont personne ne parle. Stanley ne dit rien, mais il chauffe juste ce qu\'il faut. Le meilleur des confidents.',
@@ -45,8 +46,7 @@
     ['stanley', 'Stanley chauffe les dés : +50 points chaque fois qu\'on garde des dés qui rapportent.'],
     ['triple3', 'Trois 3 valent 600. Socrate trouve que le 3 est sous-coté.'],
     ['pair6', 'Une paire de 6 vaut 200 points. Comme le niveau 60, en plus petit.'],
-    ['noopen', 'Plus besoin de 500 points pour ouvrir. Socrate trouve ça trop lent.'],
-    ['hot2', 'Main pleine (les 5 dés gardés) : les points du tour sont doublés.']
+    ['noopen', 'Plus besoin de 500 points pour ouvrir. Socrate trouve ça trop lent.']
   ];
   const RAGE = ['Jean-François : « Ah non, pas encore ! »', 'Françoise : « Il fait ça à chaque fois. »', 'Jean-François : « Chez nous, c\'est pas comme ça. »', 'Françoise : « Bon. Mais on note tout. »', 'Jean-François : « Stanley, tu l\'as vu comme moi ? »', 'Yohann : « Je vous avais prévenus. »'];
   const BANK = ['« Ça, c\'est du 10 000. »', '« On n\'est pas pressés. »', '« Tranquille. »', '« Comme à la maison. »'];
@@ -91,14 +91,14 @@
   const needOpen = who => !G.open[who] && !G.rules.noopen;
   const canBank = (who, extra) => !needOpen(who) || G.turn + (extra ? extra + (G.rules.stanley ? 50 : 0) : 0) >= 500;
   function setup() {
-    board.innerHTML = `<div class="rivals"><img src="parents.jpg" alt="Françoise et Jean-François" width="120" height="120"><p><b>Françoise & Jean-François</b><br>Maîtres du 10 000 · Gardiens du Fragment III</p></div>
+    board.innerHTML = `<div class="rivals"><img src="parents.jpg?v=2" alt="Françoise et Jean-François" width="120" height="120"><p><b>Françoise & Jean-François</b><br>Maîtres du 10 000 · Gardiens du Fragment III</p></div>
       <h3>Choisis ta partie</h3><p style="text-align:center;margin:8px 0 16px">Stanley a déjà réchauffé les dés.</p>
       <div class="btn-row"><button class="btn gold" data-t="5000">Partie express · 5 000</button><button class="btn dark" data-t="10000">Partie de famille · 10 000</button></div>`;
     $$('[data-t]', board).forEach(b => b.addEventListener('click', () => { Sound.init(); Sound.click(); start(+b.dataset.t); }));
   }
   function start(target) {
     G = { target, open: { me: false, yo: false }, yoTurns: 0, me: 0, yo: 0, who: 'me', dice: [], turn: 0, rolled: false, rules: {}, ruleCount: 0, busy: false, over: false, ruleOrder: RULES.slice().sort(() => Math.random() - .5) };
-    board.innerHTML = `<div class="scorebox"><div id="boxMe"><small>${esc(h.name)}</small><b id="scMe">0</b></div><div id="boxYo"><small>Françoise & J.-F.</small><b id="scYo">0</b></div></div>
+    board.innerHTML = `<div class="scorebox"><div id="boxMe"><small>${esc(h.name)}</small><b id="scMe">0</b></div><div id="boxYo"><img class="avatar" src="parents.jpg?v=2" alt="Françoise et Jean-François" width="56" height="56"><small>Françoise & J.-F.</small><b id="scYo">0</b></div></div>
       <p class="turn-info" style="margin-top:10px">Objectif : <b>${target.toLocaleString('fr-FR')}</b> · Tour : <b id="turnPts">0</b> · Sélection : <b id="selPts">0</b></p>
       <p class="dlog" id="openInfo" style="min-height:0;margin-top:2px;font-size:14px"></p><div class="tray" id="tray"></div><div class="kept" id="kept"></div><p class="dlog" id="dlog"></p>
       <div class="dice-actions"><button class="btn gold" id="btnRoll">Lancer</button><button class="btn dark" id="btnBank">Mettre à l'abri</button></div>
@@ -133,7 +133,8 @@
     G.dice.forEach(d => d.fresh = false);
     const mine = G.who === 'me' && !G.busy && !G.over, valid = ss > 0;
     $('#btnRoll').disabled = !(mine && (!G.rolled || valid));
-    $('#btnRoll').textContent = G.rolled ? 'Garder et relancer' : 'Lancer';
+    const full = G.rolled && valid && free().every(d => d.sel);
+    $('#btnRoll').textContent = !G.rolled ? 'Lancer' : full ? 'Main pleine ! Rejouer les 5' : 'Garder et relancer';
     $('#btnBank').disabled = !(mine && G.rolled && valid && canBank('me', ss));
     $('#openInfo').textContent = needOpen('me') ? 'Ouverture : il te faut 500 points en un tour pour marquer.' : '';
   }
@@ -142,9 +143,8 @@
     G.turn += ss + (G.rules.stanley ? 50 : 0);
     G.dice.forEach(d => { if (d.sel) { d.kept = true; d.sel = false; } });
     if (G.dice.every(d => d.kept)) {
-      G.dice.forEach(d => d.kept = false);
-      if (G.rules.hot2) G.turn *= 2;
-      log('Main pleine ! Les cinq dés reviennent' + (G.rules.hot2 ? ', et les points du tour doublent !' : '.'));
+      G.dice.forEach(d => d.kept = false); G.hot = true;
+      log('Main pleine ! Les 5 dés marquent : on rejoue les 5 d\'office');
       Sound.chime();
     }
     return true;
@@ -167,7 +167,8 @@
     if (G.who !== 'me' || G.busy) return;
     Sound.click();
     if (G.rolled && !commit()) return;
-    const ok = await roll(); if (ok) log('Touche les dés qui rapportent pour les garder.');
+    const hot = G.hot; G.hot = false;
+    const ok = await roll(); if (ok) log(hot ? 'Main pleine ! Tu rejoues les 5 dés d\'office. Touche ceux qui rapportent.' : 'Touche les dés qui rapportent pour les garder.');
   }
   function bank(who) {
     G.open[who] = true;
