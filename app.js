@@ -1246,12 +1246,12 @@ if (PARAMS.has('entrer')) { introOpened = true; $('#enterBtn').click(); }
     const done = new Set(store.get('gs_frags', []));
     $('#doors').innerHTML = DOORS.map(d => {
       const open = AP || Date.now() >= d.at;
-      return `<a class="door ${open ? 'open' : ''} ${done.has(d.n) ? 'done' : ''}" href="${d.url}${AP ? '?apercu' : ''}" aria-label="Porte ${ROMAN5[d.n - 1]} : ${d.title}${open ? '' : ' (scellée)'}"><span class="lk">${open ? '🔓' : '🔒'}</span><span class="n">${ROMAN5[d.n - 1]}</span><span class="d">${d.day.split(' ').slice(1).join(' ')}</span></a>`;
+      return `<a class="door ${open ? 'open' : ''} ${done.has(d.n) ? 'done' : ''}" href="${d.url}${AP ? '?apercu' : ''}" aria-label="Porte ${ROMAN5[d.n - 1]}${open ? ' : ' + d.title : ' (scellée)'}"><span class="lk">${open ? '🔓' : '🔒'}</span><span class="n">${ROMAN5[d.n - 1]}</span><span class="d">${d.day.split(' ').slice(1).join(' ')}</span></a>`;
     }).join('');
     const next = DOORS.find(d => Date.now() < d.at);
     const cur = [...DOORS].reverse().find(d => Date.now() >= d.at);
     $('#nextDoor').innerHTML = (cur ? `Porte ouverte : <b>${cur.title}</b>${done.has(cur.n) ? ' ✔' : ' — elle t\'attend !'}<br>` : '') +
-      (next ? `Prochaine : <b>${next.title}</b>, dans <span id="ndLeft">${left(next.at - Date.now())}</span>` : 'Toutes les portes sont ouvertes. Rendez-vous au QG.');
+      (next ? `Prochaine porte : <b>${next.day}</b> à 10 h, dans <span id="ndLeft">${left(next.at - Date.now())}</span>` : 'Toutes les portes sont ouvertes. Rendez-vous au QG.');
     $('#mapHome').innerHTML = mapSVG([...done]);
   }
   render();

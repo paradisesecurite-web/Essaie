@@ -433,7 +433,7 @@ function gate(n) {
   document.body.classList.add('locked');
   document.body.insertAdjacentHTML('beforeend', `<div id="intro"><div class="tavern-glow"></div>
     <div class="locked-door"><div class="seal-mini">${sealSVG()}</div>
-    <p class="kicker">Porte ${ROMAN5[n - 1]} · ${d.title}</p>
+    <p class="kicker">Porte ${ROMAN5[n - 1]} · titre scellé</p>
     <h1 class="convo-title" style="color:var(--gold2)">Encore scellée</h1>
     <p class="intro-kicker" style="opacity:1;animation:none">Elle s'ouvrira le ${d.day} à 10 h.<br>Patience, voleur.</p>
     <p class="lock-left" id="lockLeft"></p>
@@ -583,7 +583,7 @@ function onTaps(el, n, cb, each) {
 /* Pied de page commun */
 function doorFooter(n) {
   const next = DOORS[n];
-  return `<footer><p class="credit">${next ? `Prochaine porte : <b>${next.title}</b>,<br>le ${next.day} à 10 h.` : 'Rendez-vous au QG, le 5 novembre à minuit.'}</p>
+  return `<footer><p class="credit">${next ? `Prochaine porte : <b>le ${next.day} à 10 h</b>.<br>Son nom reste scellé jusque-là.` : 'Rendez-vous au QG, le 5 novembre à minuit.'}</p>
     <div class="btn-row" style="margin-top:16px"><a class="btn dark small" href="${backLink()}">Retour au calendrier</a></div>
     <p class="legal">Création de fan, 100 % originale. Non affiliée à Blizzard Entertainment.</p></footer>`;
 }

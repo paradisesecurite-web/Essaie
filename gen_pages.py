@@ -13,12 +13,12 @@ for n, title, date, desc in DAYS:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Porte {R[n-1]} · {title}</title>
-<meta name="description" content="{desc}">
+<title>Porte {R[n-1]} · Le Calendrier des Ombres</title>
+<meta name="description" content="Une porte du Calendrier des Ombres.">
 <meta name="theme-color" content="#120a06">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Porte {R[n-1]} · {title}">
-<meta property="og:description" content="{desc}">
+<meta property="og:title" content="Porte {R[n-1]} · Le Calendrier des Ombres">
+<meta property="og:description" content="Une porte s'ouvre chaque matin à 10 h. Brise le sceau.">
 <meta property="og:image" content="https://paradisesecurite-web.github.io/Essaie/og.jpg">
 <meta property="og:url" content="https://paradisesecurite-web.github.io/Essaie/jour{n}.html">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23a51d17'/%3E%3Cpath d='M32 8l4 30-4 4-4-4z M22 38h20v4H22z M30 42h4v10h-4z' fill='%23f3d27a'/%3E%3C/svg%3E">
@@ -38,6 +38,7 @@ for n, title, date, desc in DAYS:
   </header>
   <div id="content"></div>
 </main>
+<script src="calendrier.js"></script>
 <script src="commun.js"></script>
 <script src="j{n}.js"></script>
 </body>
