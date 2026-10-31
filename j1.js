@@ -9,7 +9,7 @@
       <div id="storyRoot"></div><div id="replayRow" class="btn-row hidden" style="margin-top:14px"><button class="btn dark small" id="replayBtn">Revivre la Fable</button></div></section>
     <section id="game" class="hidden"><div class="sec-head"><span class="sec-num">II</span><h2>Les Cadenas du Spectre</h2><p>Ouvre les 10 cadenas pour libérer le spectre.</p></div>
       <div class="game-wrap"><canvas class="game-cv" id="lockCv"></canvas>
-        <div class="duel-ov" id="lockOv"><h3>Les Cadenas du Spectre</h3><p>Touche l'écran quand le crochet passe dans la <b>zone dorée</b>. Il y a <b>10 cadenas</b>, chacun un peu plus rapide que le précédent. Tu as <b>3 crochets</b>, et tu en récupères un tous les 3 cadenas.</p><button class="btn gold" id="lockStart">Prendre les crochets</button></div></div>
+        <div class="duel-ov" id="lockOv"><h3>Les Cadenas du Spectre</h3><p class="ending-badge" style="margin-bottom:10px">Difficulté : expert</p><p>Touche l'écran quand le crochet passe dans la <b>zone dorée</b>. Il y a <b>10 cadenas</b>, chacun un peu plus rapide que le précédent. Tu as <b>3 crochets</b>, et tu en récupères un tous les 3 cadenas.</p><button class="btn gold" id="lockStart">Prendre les crochets</button></div></div>
       <button class="btn gold big-btn" id="lockTap" style="margin-top:12px">Crocheter !</button>
       <div class="stat-row"><div>Serrures<b id="lkNow">0 / 10</b></div><div>Crochets<b id="lkPicks">3</b></div><div>Record<b id="lkBest">${Math.min(10, store.get('gs_j1_best', 0))} / 10</b></div></div>
       <div class="parch epilogue hidden" id="epi"></div>
