@@ -79,15 +79,15 @@
     let W = 0, H = 0, st = null, run = false, last = 0, freed = store.get('gs_j1_freed', false);
     function size() { const d = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect(); if (!r.width) return; W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); draw(); }
     const TOTAL = 10;
-    const speedFor = l => 1.6 + (l - 1) * .2;          // serrure 1 : lent… serrure 10 : rapide
-    const widthFor = l => 1.1 - (l - 1) * .07;         // zone dorée de plus en plus étroite
+    const speedFor = l => 2.3 + (l - 1) * .3;          // serrure 1 : 2,3… serrure 10 : 5 (rad/s)
+    const widthFor = l => .8 - (l - 1) * .055;         // zone dorée de plus en plus étroite
     function target() { st.tA = Math.random() * Math.PI * 2; st.tW = widthFor(st.lvl); }
     function reset() { st = { lvl: 1, ang: 0, dir: 1, speed: speedFor(1), picks: 3, opened: 0, broken: 0, fx: [], flash: 0, shake: 0, over: false, open: 0, won: false }; target(); }
     const angDist = (a, b) => { let d = Math.abs(a - b) % (Math.PI * 2); return d > Math.PI ? Math.PI * 2 - d : d; };
     function fx(t, col) { st.fx.push({ t, col, life: 0 }); }
     function tap() {
       if (!run || st.over || st.open > 0) return;
-      if (angDist(st.ang, st.tA) <= st.tW / 2 + .1) {
+      if (angDist(st.ang, st.tA) <= st.tW / 2 + .04) {
         st.opened++; st.flash = 1; st.open = .8;
         Sound.tone(1900, .05, { type: 'square', g: .06 }); Sound.tone(950, .12, { type: 'triangle', g: .1, t: .03 });
         if (st.opened >= TOTAL) { st.open = 0; hud(); return win(); }
