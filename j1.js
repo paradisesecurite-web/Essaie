@@ -7,11 +7,11 @@
   $('#content').innerHTML = `
     <section id="story"><div class="sec-head"><span class="sec-num">I</span><h2>La Fable</h2><p>Halloween, minuit, un cimetière. Que pourrait-il arriver ?</p></div>
       <div id="storyRoot"></div><div id="replayRow" class="btn-row hidden" style="margin-top:14px"><button class="btn dark small" id="replayBtn">Revivre la Fable</button></div></section>
-    <section id="game" class="hidden"><div class="sec-head"><span class="sec-num">II</span><h2>Les Cadenas du Spectre</h2><p>Ouvre 3 serrures pour libérer le spectre.</p></div>
+    <section id="game" class="hidden"><div class="sec-head"><span class="sec-num">II</span><h2>Les Cadenas du Spectre</h2><p>Ouvre les 10 cadenas pour libérer le spectre.</p></div>
       <div class="game-wrap"><canvas class="game-cv" id="lockCv"></canvas>
-        <div class="duel-ov" id="lockOv"><h3>Les Cadenas du Spectre</h3><p>Touche l'écran quand le crochet passe dans la <b>zone dorée</b>. Chaque goupille posée fait accélérer le crochet. Tu as <b>3 crochets</b>, pas un de plus.</p><button class="btn gold" id="lockStart">Prendre les crochets</button></div></div>
+        <div class="duel-ov" id="lockOv"><h3>Les Cadenas du Spectre</h3><p>Touche l'écran quand le crochet passe dans la <b>zone dorée</b>. Il y a <b>10 cadenas</b>, chacun un peu plus rapide que le précédent. Tu as <b>3 crochets</b>, et tu en récupères un tous les 3 cadenas.</p><button class="btn gold" id="lockStart">Prendre les crochets</button></div></div>
       <button class="btn gold big-btn" id="lockTap" style="margin-top:12px">Crocheter !</button>
-      <div class="stat-row"><div>Serrures<b id="lkNow">0</b></div><div>Crochets<b id="lkPicks">3</b></div><div>Record<b id="lkBest">${store.get('gs_j1_best', 0)}</b></div></div>
+      <div class="stat-row"><div>Serrures<b id="lkNow">0 / 10</b></div><div>Crochets<b id="lkPicks">3</b></div><div>Record<b id="lkBest">${Math.min(10, store.get('gs_j1_best', 0))} / 10</b></div></div>
       <div class="parch epilogue hidden" id="epi"></div>
     </section>
     ${doorFooter(1)}`;
@@ -51,7 +51,7 @@
         verite: 'Yohann pose une main sur son cœur, l\'air blessé. « Traître. » Le spectre, lui, hoche la tête, satisfait. Quinze ans qu\'il attendait ce témoignage.',
         defense: 'Le spectre te dévisage longuement. « Dix minutes de retard… Le mid était mort trois fois. » Yohann te glisse un merci du coin des lèvres.',
         deal: '« S\'arranger ? » Le spectre hésite. Personne ne lui avait jamais fait d\'offre commerciale. Tu sens que tu le tiens : il est déjà à moitié convaincu, et à moitié transparent.'
-      })[s.tags[1]] + `\n\nLe spectre se redresse. « Je ne trouverai le repos qu'à une condition. Dans le monde nouveau, quand [[${h.name}]] appellera à l'aide, la Sauce viendra. Toujours. »\n\nYohann lève la main droite. « Je le jure. Sur ma dague, sur ma bière… et sur Stanley. »\n\n« Les serments ne coûtent rien », gronde le spectre. « Mon âme est retenue par les cadenas de cette crypte. Qu'un voleur à la main sûre en ouvre trois, et je partirai en paix. »\n\nYohann te tend un trousseau de crochets. « Moi, je tiens la lanterne. C'est ça aussi, le travail d'équipe. »`,
+      })[s.tags[1]] + `\n\nLe spectre se redresse. « Je ne trouverai le repos qu'à une condition. Dans le monde nouveau, quand [[${h.name}]] appellera à l'aide, la Sauce viendra. Toujours. »\n\nYohann lève la main droite. « Je le jure. Sur ma dague, sur ma bière… et sur Stanley. »\n\n« Les serments ne coûtent rien », gronde le spectre. « Mon âme est retenue par les cadenas de cette crypte. Qu'un voleur à la main sûre ouvre les dix, et je partirai en paix. »\n\nYohann te tend un trousseau de crochets. « Moi, je tiens la lanterne. C'est ça aussi, le travail d'équipe. »`,
       cta: 'Prendre les crochets'
     }
   ];
@@ -78,28 +78,33 @@
     const cv = $('#lockCv'), cx = cv.getContext('2d');
     let W = 0, H = 0, st = null, run = false, last = 0, freed = store.get('gs_j1_freed', false);
     function size() { const d = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect(); if (!r.width) return; W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); draw(); }
-    const pinsFor = l => Math.min(6, 3 + Math.floor((l - 1) / 2));
-    function target() { st.tA = Math.random() * Math.PI * 2; st.tW = Math.max(.45, 1.05 - st.lvl * .05); }
-    function reset() { st = { lvl: 1, pins: pinsFor(1), set: 0, ang: 0, dir: 1, speed: 1.75, picks: 3, opened: 0, fx: [], flash: 0, shake: 0, over: false, open: 0 }; target(); }
+    const TOTAL = 10;
+    const speedFor = l => 1.6 + (l - 1) * .2;          // serrure 1 : lent… serrure 10 : rapide
+    const widthFor = l => 1.1 - (l - 1) * .07;         // zone dorée de plus en plus étroite
+    function target() { st.tA = Math.random() * Math.PI * 2; st.tW = widthFor(st.lvl); }
+    function reset() { st = { lvl: 1, ang: 0, dir: 1, speed: speedFor(1), picks: 3, opened: 0, broken: 0, fx: [], flash: 0, shake: 0, over: false, open: 0, won: false }; target(); }
     const angDist = (a, b) => { let d = Math.abs(a - b) % (Math.PI * 2); return d > Math.PI ? Math.PI * 2 - d : d; };
     function fx(t, col) { st.fx.push({ t, col, life: 0 }); }
     function tap() {
       if (!run || st.over || st.open > 0) return;
-      if (angDist(st.ang, st.tA) <= st.tW / 2 + .12) {
-        st.set++; st.flash = 1; Sound.tone(1900, .05, { type: 'square', g: .06 }); Sound.tone(950, .12, { type: 'triangle', g: .1, t: .03 });
-        if (st.set >= st.pins) {
-          st.opened++; st.open = 1.1; Sound.chime(); fx('Serrure ouverte !', '#f3d27a');
-          if (st.opened >= 3 && !freed) { freed = true; store.set('gs_j1_freed', true); setTimeout(epilogue, 900); }
-        } else { target(); st.dir *= -1; st.speed += .08; }
+      if (angDist(st.ang, st.tA) <= st.tW / 2 + .1) {
+        st.opened++; st.flash = 1; st.open = .8;
+        Sound.tone(1900, .05, { type: 'square', g: .06 }); Sound.tone(950, .12, { type: 'triangle', g: .1, t: .03 });
+        if (st.opened >= TOTAL) { st.open = 0; hud(); return win(); }
+        Sound.chime(); fx(st.opened === TOTAL - 1 ? 'Dernière serrure !' : 'Serrure ouverte !', '#f3d27a');
       } else {
-        st.picks--; st.shake = 9; Sound.crack(); fx('Crochet brisé !', '#ff7a6a');
+        st.picks--; st.broken++; st.shake = 9; Sound.crack(); fx('Crochet brisé !', '#ff7a6a');
         if (navigator.vibrate) try { navigator.vibrate(50); } catch (e) {}
-        if (st.picks <= 0) gameOver(); else target();
+        if (st.picks <= 0) return gameOver(); else target();
       }
       hud();
     }
-    function nextLock() { st.lvl++; st.pins = pinsFor(st.lvl); st.set = 0; st.speed = 1.75 + st.lvl * .25; if (st.picks < 3) { st.picks++; fx('+1 crochet', '#bfe3ff'); } hud(); target(); }
-    function hud() { $('#lkNow').textContent = st.opened; $('#lkPicks').textContent = st.picks; }
+    function nextLock() {
+      st.lvl = st.opened + 1; st.speed = speedFor(st.lvl); st.dir *= -1;
+      if (st.picks < 3 && st.opened % 3 === 0) { st.picks++; fx('+1 crochet', '#bfe3ff'); }
+      hud(); target();
+    }
+    function hud() { $('#lkNow').textContent = st.opened + ' / ' + TOTAL; $('#lkPicks').textContent = st.picks; }
     function update(dt) {
       st.ang = (st.ang + st.dir * st.speed * dt + Math.PI * 2) % (Math.PI * 2);
       st.flash = Math.max(0, st.flash - dt * 4); st.shake = Math.max(0, st.shake - dt * 30);
@@ -113,7 +118,7 @@
       const bg = cx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#16121c'); bg.addColorStop(1, '#0a0705'); cx.fillStyle = bg; cx.fillRect(-20, -20, W + 40, H + 40);
       cx.fillStyle = 'rgba(200,210,230,.06)'; for (let i = 0; i < 6; i++) { cx.beginPath(); cx.ellipse(W * (i / 5), H * .85, W * .3, 30, 0, 0, 7); cx.fill(); }
       cx.fillStyle = '#0d0a10'; [[.1, .62], [.2, .7], [.82, .64], [.92, .72]].forEach(([x, y]) => { const gx = W * x, gy = H * y; cx.beginPath(); cx.moveTo(gx - 16, H); cx.lineTo(gx - 16, gy); cx.arc(gx, gy, 16, Math.PI, 0); cx.lineTo(gx + 16, H); cx.fill(); });
-      const R = Math.min(W, H) * .32, X = W / 2, Y = H * .54;
+      const R = Math.min(W, H) * .3, X = W / 2, Y = H * .56;
       const ring = cx.createRadialGradient(X - R * .3, Y - R * .3, R * .2, X, Y, R * 1.15); ring.addColorStop(0, '#6a6a72'); ring.addColorStop(1, '#202024');
       cx.fillStyle = ring; cx.beginPath(); cx.arc(X, Y, R, 0, 7); cx.fill();
       cx.fillStyle = '#141416'; cx.beginPath(); cx.arc(X, Y, R * .72, 0, 7); cx.fill();
@@ -127,8 +132,9 @@
         const a = st.ang; cx.strokeStyle = '#d9dde6'; cx.lineWidth = 4; cx.lineCap = 'round';
         cx.beginPath(); cx.moveTo(X, Y); cx.lineTo(X + Math.cos(a) * R * .98, Y + Math.sin(a) * R * .98); cx.stroke();
         cx.fillStyle = '#d9dde6'; cx.beginPath(); cx.arc(X + Math.cos(a) * R * .98, Y + Math.sin(a) * R * .98, 6, 0, 7); cx.fill();
-        for (let i = 0; i < st.pins; i++) { const px = X + (i - (st.pins - 1) / 2) * 22; cx.fillStyle = i < st.set || open ? '#f3d27a' : 'rgba(255,255,255,.15)'; cx.fillRect(px - 7, Y - R - 30, 14, 18); }
-        cx.fillStyle = '#f3d27a'; cx.font = '700 14px Cinzel, serif'; cx.textAlign = 'left'; cx.fillText('Serrure n° ' + st.lvl, 14, 24);
+        const gap = Math.min(24, (W - 40) / TOTAL);
+        for (let i = 0; i < TOTAL; i++) { const px = X + (i - (TOTAL - 1) / 2) * gap; cx.fillStyle = i < st.opened ? '#f3d27a' : i === st.opened ? 'rgba(243,210,122,.35)' : 'rgba(255,255,255,.12)'; cx.fillRect(px - gap * .3, Y - R - 30, gap * .6, 16); }
+        cx.fillStyle = '#f3d27a'; cx.font = '700 14px Cinzel, serif'; cx.textAlign = 'left'; cx.fillText('Serrure ' + Math.min(st.lvl, TOTAL) + ' / ' + TOTAL, 14, 24);
         cx.textAlign = 'right'; cx.fillText('Crochets : ' + '🗝'.repeat(Math.max(0, st.picks)), W - 14, 24);
         st.fx.forEach(f => { cx.globalAlpha = Math.max(0, 1 - f.life / 1.2); cx.fillStyle = f.col; cx.font = '900 22px Cinzel, serif'; cx.textAlign = 'center'; cx.shadowColor = '#000'; cx.shadowBlur = 8; cx.fillText(f.t, X, Y + R + 34 - f.life * 30); cx.shadowBlur = 0; cx.globalAlpha = 1; });
       }
@@ -136,11 +142,22 @@
     }
     function loop(now) { if (!run) return; const dt = Math.min(.05, (now - last) / 1000); last = now; if (!document.hidden) { update(dt); draw(); } requestAnimationFrame(loop); }
     function start() { Sound.init(); Sound.click(); reset(); hud(); size(); run = true; last = performance.now(); $('#lockOv').classList.add('hidden'); requestAnimationFrame(loop); }
+    function saveBest() { const best = store.get('gs_j1_best', 0), rec = st.opened > best; if (rec) { store.set('gs_j1_best', st.opened); $('#lkBest').textContent = st.opened + ' / ' + TOTAL; } return rec; }
+    function win() {
+      st.over = true; st.won = true; run = false; draw(); saveBest();
+      Sound.fanfare(); const r = cv.getBoundingClientRect(); Embers.burst(r.left + r.width / 2, r.top + r.height / 2, 70);
+      const first = !freed;
+      if (first) { freed = true; store.set('gs_j1_freed', true); }
+      const ov = $('#lockOv');
+      ov.innerHTML = `<h3>Les 10 cadenas sont ouverts !</h3><div class="big">10 / 10</div><p>${st.broken ? st.broken + ' crochet' + (st.broken > 1 ? 's' : '') + ' brisé' + (st.broken > 1 ? 's' : '') + ' en route.' : 'Sans briser un seul crochet. Légendaire.'}<br>Le spectre est libre.</p><button class="btn gold" id="lockAgain">Rejouer</button>`;
+      ov.classList.remove('hidden'); $('#lockAgain').addEventListener('click', start);
+      if (first) setTimeout(epilogue, 900);
+    }
     function gameOver() {
       st.over = true; run = false; draw();
-      const best = store.get('gs_j1_best', 0), rec = st.opened > best; if (rec) { store.set('gs_j1_best', st.opened); $('#lkBest').textContent = st.opened; }
+      const rec = saveBest();
       const ov = $('#lockOv');
-      ov.innerHTML = `<h3>${rec ? 'Nouveau record !' : 'Plus de crochets…'}</h3><div class="big">${st.opened}</div><p>serrure${st.opened > 1 ? 's' : ''} ouverte${st.opened > 1 ? 's' : ''}.<br>${freed ? 'Le spectre repose en paix. Tu peux viser le record.' : 'Il en faut 3 pour libérer le spectre. Yohann tient toujours la lanterne.'}</p><button class="btn gold" id="lockAgain">Reprendre des crochets</button>`;
+      ov.innerHTML = `<h3>${rec ? 'Nouveau record !' : 'Plus de crochets…'}</h3><div class="big">${st.opened} / ${TOTAL}</div><p>serrure${st.opened > 1 ? 's' : ''} ouverte${st.opened > 1 ? 's' : ''}.<br>${freed ? 'Le spectre repose déjà en paix. Tu peux retenter les 10.' : 'Il faut ouvrir les 10 pour libérer le spectre. Yohann tient toujours la lanterne.'}</p><button class="btn gold" id="lockAgain">Reprendre des crochets</button>`;
       ov.classList.remove('hidden'); $('#lockAgain').addEventListener('click', start);
     }
     cv.addEventListener('pointerdown', e => { e.preventDefault(); tap(); });
