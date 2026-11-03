@@ -98,3 +98,36 @@
 .scorebox .avatar{display:block;width:44px;height:44px;margin:0 auto 4px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--gold2)}
 .rivals-parch{background:rgba(43,23,9,.08);box-shadow:inset 0 0 0 1px rgba(90,58,30,.35)}
 .rivals-parch p{color:var(--ink)}.rivals-parch b{color:var(--blood)}
+
+/* ===== Porte V : le dernier sceau ===== */
+.final-seal-wrap{text-align:center;padding:20px 0 10px}
+.seal-btn.final-seal{position:relative;left:auto;top:auto;transform:none;width:170px;height:170px;margin:0 auto;display:block;animation:finalIdle 2.4s infinite ease-in-out}
+.seal-btn.final-seal.cracking{animation:finalShake .32s linear}
+.seal-btn.final-seal.broken{animation:none}
+@keyframes finalIdle{50%{transform:scale(1.06)}}
+@keyframes finalShake{20%{transform:translateX(-4px) rotate(-3deg)}40%{transform:translateX(4px) rotate(3deg)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.polaroid{margin:10px auto 0;max-width:420px;background:#fbf8f0;padding:12px 12px 6px;border-radius:3px;transform:rotate(-2.5deg);box-shadow:0 22px 50px rgba(0,0,0,.7)}
+.polaroid img{width:100%;height:auto;border-radius:2px}
+.polaroid figcaption{font-family:var(--ff-sign);font-size:30px;color:#1f2a55;text-align:center;padding:6px 0 4px}
+.polaroid.drop{animation:polaDrop 1.2s cubic-bezier(.2,1.3,.4,1)}
+@keyframes polaDrop{from{opacity:0;transform:translateY(-80px) rotate(-14deg) scale(.85)}to{opacity:1;transform:rotate(-2.5deg)}}
+.voice-card{margin-top:26px;padding:20px 18px;text-align:center}
+.voice-card.rise{animation:fadeUp 1s .6s both}
+.voice-card .kick{font-family:var(--ff-head);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
+.player{display:flex;align-items:center;gap:14px;text-align:left}
+.player .play{flex-shrink:0;width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+  background:radial-gradient(circle at 35% 30%,#dc4b3c,#a51d17 55%,#5e0d0a);box-shadow:0 0 0 3px #f3d27a,0 0 26px rgba(220,75,60,.55),0 8px 16px rgba(0,0,0,.4);animation:pulse 2s infinite}
+.player.on .play{animation:none}
+.player .play svg{width:34px;height:34px}
+.pmeta{flex:1;min-width:0}
+.bars{display:flex;align-items:center;gap:3px;height:34px}
+.bars i{flex:1;height:30%;border-radius:2px;background:rgba(122,18,15,.35);transition:height .2s}
+.player.on .bars i{background:var(--blood);animation:bar .9s infinite ease-in-out}
+.player.on .bars i:nth-child(3n){animation-delay:-.3s}.player.on .bars i:nth-child(3n+1){animation-delay:-.6s}.player.on .bars i:nth-child(4n){animation-duration:.7s}
+@keyframes bar{0%,100%{height:20%}50%{height:95%}}
+.ptrack{height:8px;border-radius:5px;background:rgba(43,23,9,.2);margin-top:8px;cursor:pointer;overflow:hidden}
+.ptrack i{display:block;height:100%;width:0;background:var(--blood)}
+.ptime{display:flex;justify-content:space-between;font-family:var(--ff-head);font-size:12px;color:var(--ink-soft);margin-top:4px}
+.final-cd{text-align:center;margin-top:18px;padding-top:16px;border-top:1px dashed rgba(90,58,30,.4)}
+.final-cd .kick{font-family:var(--ff-head);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-soft)}
+.big-cd{font-family:var(--ff-head);font-weight:900;font-size:26px;color:var(--blood);margin-top:6px;font-variant-numeric:tabular-nums}

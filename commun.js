@@ -236,7 +236,8 @@ const Sound = (() => {
     fanfare() { [[62, 0], [66, .16], [69, .32], [74, .5], [69, .72], [74, .88]].forEach(([m, t]) => tone(mtof(m), .7, { t, type: 'sawtooth', g: .08, a: .03, lp: 2600, lp2: 700 })); },
     secret() { [57, 62, 65, 69, 74].forEach((m, i) => tone(mtof(m), 2.2, { t: i * .16, type: 'triangle', g: .07, a: .02 })); [62, 65, 69].forEach(m => tone(mtof(m), 3.5, { t: .8, type: 'sine', g: .04, a: .6 })); }
   };
-  return Object.assign({ init, startMusic, setMuted, tone, noise, get muted() { return muted; } }, fx);
+  function duck(on) { if (ctx && musicBus) musicBus.gain.setTargetAtTime(on ? 0.05 : 0.55, ctx.currentTime, .5); }
+  return Object.assign({ init, startMusic, setMuted, tone, noise, duck, get muted() { return muted; } }, fx);
 })();
 
 /* ---------------- Bouton son ---------------- */
